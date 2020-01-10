@@ -1,0 +1,107 @@
+* {
+  font-family: 'Righteous', cursive;
+}
+body {
+  color: white;
+  background: #333;
+  text-align: center;
+}
+.infection-container {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: row;
+}
+#inputs,
+#theList {
+  width: 50%;
+}
+.title {
+  font-size: 24px;
+}
+.cities-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+button {
+  font-size: 1.25em;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+  border-radius: 4px;
+  color: white;
+  border: none;
+  text-transform: uppercase;
+}
+.city-color-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem 2rem;
+}
+.city-color-container#blue-city-container > button {
+  background: #59a0b6;
+}
+.city-color-container#yellow-city-container > button {
+  background: #f4a423;
+}
+.city-color-container#black-city-container > button {
+  background: #231e18;
+}
+.epidemic-container {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+.epidemic-container #epidemic {
+  margin: 1rem;
+  font-family: 'Creepster', cursive;
+  font-size: 36px;
+  background-image: linear-gradient(to bottom right, #37864d, #223f26);
+}
+#reset-container,
+#recalculate-container {
+  margin: 0 auto;
+  padding: 1rem;
+}
+#recalculate-container {
+  padding-top: 2rem;
+}
+#reset-container {
+  padding-top: 0;
+}
+#reset,
+#recalculate {
+  margin: 0;
+  width: 100%;
+  background: #969696;
+}
+#reset {
+  background: red;
+}
+#infected-cities-list,
+#infected-cities-odds-list {
+  background: #555;
+  border: 2px solid black;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.infected-city {
+  padding: 0.5rem;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+.infected-city.blue {
+  color: #59a0b6;
+}
+.infected-city.yellow {
+  color: #f4a423;
+}
+.infected-city.black {
+  color: #231e18;
+}
