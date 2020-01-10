@@ -173,7 +173,7 @@ function render() {
   oddsList.sort((a, b) => a.odds === b.odds ? (a.cityName > b.cityName ? 1 : -1) : (a.odds > b.odds ? -1 : 1));
   let oddsHtml = "";
   oddsList.forEach(city => {
-    oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds}%</div>`;
+    oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%</div>`;
   })
   document.getElementById("infected-cities-odds-list").innerHTML = oddsHtml;
 }
