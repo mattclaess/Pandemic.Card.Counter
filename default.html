@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html>
-<body bgcolor="#000000">
-<div>
-  <input type="text" id="theCountry"></input>
-  <button id="enterCard">Enter card</button>
-  <button id="epidemic">Epidemic</button>
-  <textarea id="theList"></textarea>
-</div>
+  <head>
+      <link href="https://fonts.googleapis.com/css?family=Creepster|Righteous&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="main.css" />
+  </head>
 
+  <div class="infection-container">
+    <div id="inputs">
+        <span class="title">Infect a city!</span>
+        <div id="infect"></div>
+    
+        <div class="epidemic-container">
+            <button id="epidemic" onClick="epidemic()"">Epidemic</button>
+        </div>
+    </div>
+    
+    
+    <div id="theList">
+        <span class="title">Infected cities</span>
+        <div id="infected-cities-list"></div>
+        <span class="title">Likelihood of infection</span>
+        <div id="infected-cities-odds-list"></div>
+    </div>
+  </div>
+
+  <div id="recalculate-container">
+      <button id="recalculate" onClick="recalculate()">Recalulate odds</button>
+    </div>
+  <div id="reset-container">
+    <button id="reset" onClick="reset()">Reset game</button>
+  </div>
+
+  <script src="cities.js"></script> 
+  <script src="main.js"></script> 
 </body>
-<script src="main.js"></script>
 </html>
