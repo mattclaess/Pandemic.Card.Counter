@@ -149,7 +149,7 @@ function render() {
       if (!possibleCardsCity) {
         possibleCards[cityName] = 1
       } else {
-        possibleCardsCity ++;
+        possibleCards[cityName] ++;
       }
     });
 
