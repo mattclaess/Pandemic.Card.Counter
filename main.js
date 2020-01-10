@@ -75,6 +75,11 @@ function setup() {
       cityButton.onclick = (e) => {
         let cityName = e.currentTarget.id;
         let storedCity = drawnInfectionCards[cityName];
+
+        if (!validateState(storedCity)) {
+          return;
+        }
+
         currentRound.push(cityName);
         updateOlderRounds(cityName);
 
@@ -84,9 +89,6 @@ function setup() {
           storedCity.currentRound += 1;
         }
 
-        if (!validateState(storedCity)) {
-          return;
-        }
         setStorage();
         render();
         console.log(drawnInfectionCards);
@@ -187,7 +189,7 @@ function render() {
 render();
 
 function validateState(storedCity) {
-  if (storedCity.currentRound > storedCity.inDeck) {
+  if (storedCity.currentRound + 1 > storedCity.inDeck) {
     alert("Impossible!");
     return false;
   }
