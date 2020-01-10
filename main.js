@@ -155,7 +155,13 @@ function render() {
       let cityObj = drawnInfectionCards[cityName];
       let possibleCardsCity = possibleCards[cityName];
       let odds = !!possibleCardsCity ? possibleCardsCity / leftInRound * 100 : 0;
-      oddsList.push({cityName, color: cityObj.color, odds});
+
+      let drawn = "";
+      if (odds !== 0) {
+        drawn = ` (${cityObj.currentRound}/${possibleCardsCity})`;
+      }
+
+      oddsList.push({cityName, color: cityObj.color, odds, drawn});
     });
   } else {
     let total = 0;
@@ -166,14 +172,15 @@ function render() {
     Object.keys(drawnInfectionCards).forEach(cityName => {
       let cityObj = drawnInfectionCards[cityName];
       let odds = (cityObj.inDeck - cityObj.currentRound) / total * 100;
-      oddsList.push({cityName, color: cityObj.color, odds});
+      let drawn = ` (${cityObj.currentRound}/${cityObj.inDeck})`;
+      oddsList.push({cityName, color: cityObj.color, odds, drawn});
     });
   }
 
   oddsList.sort((a, b) => a.odds === b.odds ? (a.cityName > b.cityName ? 1 : -1) : (a.odds > b.odds ? -1 : 1));
   let oddsHtml = "";
   oddsList.forEach(city => {
-    oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%</div>`;
+    oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%${city.drawn}</div>`;
   })
   document.getElementById("infected-cities-odds-list").innerHTML = oddsHtml;
 }
