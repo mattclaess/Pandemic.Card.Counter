@@ -86,7 +86,7 @@ button {
   border: 2px solid black;
   border-radius: 4px;
   padding: 1rem;
-  margin: 1rem 2rem 2rem 2rem;
+  margin: 1rem 2rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -104,4 +104,11 @@ button {
 }
 .infected-city.black {
   color: #231e18;
+}
+#infected-cities-odds-list {
+  flex-direction: column;
+  align-items: flex-start;
+}
+#infected-cities-odds-list .infected-city {
+  padding: 0.1rem 0;
 }
