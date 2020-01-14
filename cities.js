@@ -3,7 +3,7 @@
 //    total: number
 //    color: blue | yellow | black | red ?
 // }
-const CITY_CARDS_IN_INFECTION_DECK = {
+export const CITY_CARDS_IN_INFECTION_DECK = {
     // populate
     "denver": {
         color: "blue",

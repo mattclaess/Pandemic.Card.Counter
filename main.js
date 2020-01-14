@@ -1,36 +1,9 @@
-// this of cards in current discard pile
-// cityname : {
-//   currentRound: number of cards drawn in current round
-//   inDeck: number of cards that exist in the deck (constant unless you remove any)
-// }
-let drawnInfectionCards = {};
-const infection_deck_key = "drawn_infection_cards_dict";
-const current_round_key = "current_round_drawn_cards";
-const all_rounds_key = "all_rounds_drawn_cards";
+import CardCounter from "./cardCounter.js";
 
-let isEpidemic = false;
-let isReset = false;
-let allRounds = [];
-let currentRound = [];
-
-function setStorage() {
-  localStorage.setItem(infection_deck_key, JSON.stringify(drawnInfectionCards));
-  localStorage.setItem(current_round_key, JSON.stringify(currentRound));
-  localStorage.setItem(all_rounds_key, JSON.stringify(allRounds));
-}
-
-function getStorage() {
-  drawnInfectionCards = JSON.parse(localStorage.getItem(infection_deck_key)) || {};
-  currentRound = JSON.parse(localStorage.getItem(current_round_key)) || [];
-  allRounds = JSON.parse(localStorage.getItem(all_rounds_key)) || [];
-}
+let cardCounter = new CardCounter();
 
 // order cities by color, insert buttons, add click events
 function setup() {
-    getStorage();
-    let hasExistingGame = drawnInfectionCards && Object.keys(drawnInfectionCards).length > 0;
-
-    let cities = Object.keys(CITY_CARDS_IN_INFECTION_DECK).sort();
     let buttonContainer = document.createElement("div");
     buttonContainer.id = "cities-button-container";
 
@@ -60,42 +33,21 @@ function setup() {
     blackContainer.className = "city-color-container";
     blackContainer.id = "black-city-container";
 
-    cities.forEach(city => {
-      if (!hasExistingGame) {
-        drawnInfectionCards[city] = {
-          currentRound: 0,
-          inDeck: CITY_CARDS_IN_INFECTION_DECK[city].total,
-          color: CITY_CARDS_IN_INFECTION_DECK[city].color
-        }
-      }
-
+    for (let city in cardCounter.drawnInfectionCards) {
       let cityButton = document.createElement("button");
       cityButton.id = city;
       cityButton.textContent = city;
       cityButton.onclick = (e) => {
         let cityName = e.currentTarget.id;
-        let storedCity = drawnInfectionCards[cityName];
-
-        if (!validateState(cityName, storedCity, isEpidemic)) {
-          return;
+        if (cardCounter.isEpidemic) {
+          document.getElementById("epidemic").textContent = "Epidemic";
         }
-
-        currentRound.push(cityName);
-        updateOlderRounds(cityName);
-
-        if (isEpidemic) {
-          clearRound();
-        } else {
-          storedCity.currentRound += 1;
-        }
-
-        setStorage();
+        cardCounter.drawCard(cityName);
         render();
       };
 
-      appendToContainer(CITY_CARDS_IN_INFECTION_DECK[city].color, cityButton);
-    });
-    setStorage();
+      appendToContainer(cardCounter.drawnInfectionCards[city].color, cityButton);
+    }
 
     buttonContainer.appendChild(blueContainer);
     buttonContainer.appendChild(yellowContainer);
@@ -104,28 +56,16 @@ function setup() {
 }
 setup();
 
-function updateOlderRounds(cityName) {
-  allRounds.forEach(round => {
-    let index = round.indexOf(cityName);
-    if (index > -1) {
-      round.splice(index, 1);
-    }
-  });
-  if (allRounds.length !== 0 && allRounds[allRounds.length - 1].length === 0) {
-    allRounds.pop();
-  }
-}
-
 function render() {
-  if (isReset) {
-    isReset = false;
+  if (cardCounter.isReset) {
+    cardCounter.isReset = false;
     document.getElementById("reset").textContent = "Reset game";
   }
 
   // show infected cities
   let infectedCities = "";
-  currentRound.forEach(cityName => {
-    let cityObj = drawnInfectionCards[cityName];
+  cardCounter.currentRound.forEach(cityName => {
+    let cityObj = cardCounter.drawnInfectionCards[cityName];
     infectedCities += `<div class="infected-city ${cityObj.color}">${cityName}</div>`;
   });
   document.getElementById("infected-cities-list").innerHTML = infectedCities;
@@ -133,9 +73,9 @@ function render() {
   let previousRound;
 
   // calculate odds of infection
-  for (let i = allRounds.length - 1; i >= 0; i--) {
-    if (allRounds[i].length > 0) {
-      previousRound = allRounds[i];
+  for (let i = cardCounter.allRounds.length - 1; i >= 0; i--) {
+    if (cardCounter.allRounds[i].length > 0) {
+      previousRound = cardCounter.allRounds[i];
       break;
     }
   }
@@ -155,8 +95,8 @@ function render() {
       }
     });
 
-    Object.keys(drawnInfectionCards).forEach(cityName => {
-      let cityObj = drawnInfectionCards[cityName];
+    Object.keys(cardCounter.drawnInfectionCards).forEach(cityName => {
+      let cityObj = cardCounter.drawnInfectionCards[cityName];
       let possibleCardsCity = possibleCards[cityName];
       let odds = !!possibleCardsCity ? possibleCardsCity / leftInRound * 100 : 0;
 
@@ -169,12 +109,12 @@ function render() {
     });
   } else {
     let total = 0;
-    Object.keys(drawnInfectionCards).forEach(cityName => {
-      total += drawnInfectionCards[cityName].inDeck;
+    Object.keys(cardCounter.drawnInfectionCards).forEach(cityName => {
+      total += cardCounter.drawnInfectionCards[cityName].inDeck;
     });
 
-    Object.keys(drawnInfectionCards).forEach(cityName => {
-      let cityObj = drawnInfectionCards[cityName];
+    Object.keys(cardCounter.drawnInfectionCards).forEach(cityName => {
+      let cityObj = cardCounter.drawnInfectionCards[cityName];
       let odds = (cityObj.inDeck - cityObj.currentRound) / total * 100;
       let drawn = ` (${cityObj.currentRound}/${cityObj.inDeck})`;
       oddsList.push({cityName, color: cityObj.color, odds, drawn});
@@ -190,49 +130,24 @@ function render() {
 }
 render();
 
-function validateState(cityName, storedCity, isEpidemic) {
-  if (!isEpidemic && allRounds.length !== 0 && !allRounds[allRounds.length - 1].includes(cityName))
-  {
-    alert("City is not in draw pile!");
-    return false;
-  }
-  if (storedCity.currentRound + 1 > storedCity.inDeck) {
-    alert("There should not be any more cards for that city in the draw pile!");
-    return false;
-  }
-  return true;
-}
-
-function epidemic() {
-  isEpidemic = true;
+document.getElementById("epidemic").addEventListener("click", () => {
+  cardCounter.isEpidemic = true;
   document.getElementById("epidemic").textContent = "Pick the bottom card";
-}
-
-function clearRound() {
-  isEpidemic = false;
-  document.getElementById("epidemic").textContent = "Epidemic";
-  allRounds.push(currentRound);
-  currentRound = [];
-
-  Object.keys(drawnInfectionCards).forEach(cityName => {
-    let storedCity = drawnInfectionCards[cityName];
-    storedCity.currentRound = 0;
-  });
-}
+});
 
 // If you manually edited local storage, update UI with this
-function recalculate() {
-  getStorage();
+document.getElementById("recalculate").addEventListener("click", () => {
+  cardCounter.getStorage();
   render();
-}
+});
 
-function reset() {
-  if (!isReset) {
-    isReset = true;
+document.getElementById("reset").addEventListener("click", () => {
+  if (!cardCounter.isReset) {
+    cardCounter.isReset = true;
     document.getElementById("reset").textContent = "Click again to wipe localstorage and reload";
     return;
   }
 
   localStorage.clear();
   window.location.reload();
-}
+});
