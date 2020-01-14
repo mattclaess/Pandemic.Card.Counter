@@ -76,7 +76,7 @@ function setup() {
         let cityName = e.currentTarget.id;
         let storedCity = drawnInfectionCards[cityName];
 
-        if (!validateState(storedCity)) {
+        if (!validateState(cityName, storedCity, isEpidemic)) {
           return;
         }
 
@@ -91,7 +91,6 @@ function setup() {
 
         setStorage();
         render();
-        console.log(drawnInfectionCards);
       };
 
       appendToContainer(CITY_CARDS_IN_INFECTION_DECK[city].color, cityButton);
@@ -112,6 +111,9 @@ function updateOlderRounds(cityName) {
       round.splice(index, 1);
     }
   });
+  if (allRounds.length !== 0 && allRounds[allRounds.length - 1].length === 0) {
+    allRounds.pop();
+  }
 }
 
 function render() {
@@ -188,9 +190,14 @@ function render() {
 }
 render();
 
-function validateState(storedCity) {
+function validateState(cityName, storedCity, isEpidemic) {
+  if (!isEpidemic && allRounds.length !== 0 && !allRounds[allRounds.length - 1].includes(cityName))
+  {
+    alert("City is not in draw pile!");
+    return false;
+  }
   if (storedCity.currentRound + 1 > storedCity.inDeck) {
-    alert("Impossible!");
+    alert("There should not be any more cards for that city in the draw pile!");
     return false;
   }
   return true;
