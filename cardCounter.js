@@ -59,14 +59,19 @@ export default class CardCounter {
     }
 
     updateOlderRounds(cityName) {
-      this.allRounds.forEach(round => {
-        let index = round.indexOf(cityName);
-        if (index > -1) {
-          round.splice(index, 1);
+      let previousRound = !!this.allRounds.length && this.allRounds[this.allRounds.length - 1];
+
+      if (!!previousRound) {
+        if (previousRound.length > 0) {
+          let index = previousRound.indexOf(cityName);
+          if (index > -1) {
+            previousRound.splice(index, 1);
+          }
         }
-      });
-      if (this.allRounds.length !== 0 && this.allRounds[this.allRounds.length - 1].length === 0) {
-        this.allRounds.pop();
+
+        if (previousRound.length === 0) {
+          this.allRounds.pop();
+        }
       }
     }
 

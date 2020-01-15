@@ -194,12 +194,6 @@ document.getElementById("resilpop").addEventListener("click", () => {
   render();
 });
 
-// If you manually edited local storage, update UI with this
-document.getElementById("recalculate").addEventListener("click", () => {
-  cardCounter.getStorage();
-  render();
-});
-
 document.getElementById("reset").addEventListener("click", () => {
   if (!cardCounter.isReset) {
     cardCounter.isReset = true;
