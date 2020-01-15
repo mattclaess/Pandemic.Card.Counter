@@ -2,11 +2,13 @@
 Small application for keeping track of upcoming infection cards, so maybe we can win a game for once...
 
 Current Features:
+- buttons for all currently available infection cards.
+- show list of all possible cards and the chance of drawing them.
 - shows upcoming cards in the infection deck.
-- only shows the list after the first epidemic is hit.
+- show discard pile cards.
 
 Feature Requests:
-- show discard pile details
-- add list of all possible cards. so we know which is most likely
-- make it easier to enter drawn cards. maybe a list of buttons we can just click.
-- enter posible cards list, use to calculate possiblity, use to select drawn card instead of typing.
+- add undo button
+- add ability to remove city card from the discard pile
+- remove city buttons when they can no longer be drawn
+- if we know which cards are coming up, only show those city buttons
