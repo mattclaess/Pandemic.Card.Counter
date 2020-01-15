@@ -106,10 +106,6 @@ button {
     margin: 0.25rem 2rem 1rem 2rem;
 }
 
-#infected-cities-odds-list {
-    margin: 0.25rem 2rem;
-}
-
 .infected-city {
     padding: 0.5rem;
     text-transform: uppercase;
@@ -129,6 +125,8 @@ button {
 }
 
 #infected-cities-odds-list {
+    text-align: left;
+    margin: 0.25rem 2rem;
     flex-direction: column;
     align-items: flex-start;
 
@@ -150,11 +148,15 @@ button {
     }
 }
 
-@media (max-width: 600px) { 
+@media (max-width: 700px) { 
     .infection-container {
       flex-direction: column;
     }
     #inputs, #theList {
         width: 100%;
+    }
+
+    #theList {
+        margin-top: 2rem;
     }
 }
