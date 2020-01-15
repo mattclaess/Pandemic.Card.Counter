@@ -37,6 +37,10 @@ button {
     color: white;
     border: none;
     text-transform: uppercase;
+
+    &:focus {
+        outline: none;
+    }
 }
 
 .city-color-container {
@@ -55,20 +59,29 @@ button {
     }
 
     &#black-city-container > button {
-        background: #231e18;
+        background: #000;
     }
 }
 
 .epidemic-container {
-    padding-top: 2rem;
     display: flex;
     flex-direction: column;
 
     #epidemic {
-        margin: 1rem;
+        margin: 0 1rem 1rem 1rem;
         font-family: 'Creepster', cursive;
         font-size: 36px;
         background-image: linear-gradient(to bottom right, #37864d, #223f26);
+    }
+}
+
+.resilpop-container {
+    display: flex;
+    flex-direction: column;
+
+    #resilpop {
+        margin: 1rem;
+        background-image: linear-gradient(to bottom right, #ce8b08, #630d00);
     }
 }
 
@@ -106,6 +119,14 @@ button {
     flex-wrap: wrap;
 }
 
+#infected-cities-list {
+    margin: 0.25rem 2rem 1rem 2rem;
+}
+
+#infected-cities-odds-list {
+    margin: 0.25rem 2rem;
+}
+
 .infected-city {
     padding: 0.5rem;
     text-transform: uppercase;
@@ -120,7 +141,7 @@ button {
     }
 
     &.black {
-        color: #231e18;
+        color: #000;
     }
 }
 
@@ -130,5 +151,27 @@ button {
 
     .infected-city {
         padding: 0.1rem 0;
+    }
+}
+
+.sort-container {
+    float: right;
+    margin-right: 2rem;
+
+    button {
+        background: #555;
+    
+        &.active {
+            background: #599fb6;
+        }
+    }
+}
+
+@media (max-width: 600px) { 
+    .infection-container {
+      flex-direction: column;
+    }
+    #inputs, #theList {
+        width: 100%;
     }
 }

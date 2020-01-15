@@ -71,7 +71,10 @@ function render() {
     infectedCities += `<div class="infected-city ${cityObj.color}">${cityName}</div>`;
   });
   document.getElementById("infected-cities-list").innerHTML = infectedCities;
+  renderOddsList();  
+}
 
+function renderOddsList(sortOdds = true) {
   let previousRound;
 
   // calculate odds of infection
@@ -122,7 +125,20 @@ function render() {
       oddsList.push({cityName, color: cityObj.color, odds, drawn});
     });
   }
-  oddsList.sort((a, b) => a.odds === b.odds ? (a.cityName > b.cityName ? 1 : -1) : (a.odds > b.odds ? -1 : 1));
+
+  let sortBtns = document.querySelectorAll(".sortbtn");
+  sortBtns.forEach(sortBtn => {
+    sortBtn.classList.remove("active");
+  });
+
+  if (sortOdds) {
+    oddsList.sort((a, b) => a.odds === b.odds ? (a.cityName > b.cityName ? 1 : -1) : (a.odds > b.odds ? -1 : 1));
+    document.getElementById("sortodds").classList.add("active");
+  } else {
+    oddsList.sort();
+    document.getElementById("sortname").classList.add("active");
+  }
+
   let oddsHtml = "";
   oddsList.forEach(city => {
     oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%${city.drawn}</div>`;
@@ -132,8 +148,24 @@ function render() {
   // Hide cards if they are not possible to come up
   for(let city in cityButtons) {
     let storedCity = cardCounter.drawnInfectionCards[city];
-    let cityCardNotInDrawPile = !cardCounter.isEpidemic && cardCounter.allRounds.length !== 0 && !cardCounter.allRounds[cardCounter.allRounds.length - 1].includes(city);
     let usedAllCards = storedCity.currentRound + 1 > storedCity.inDeck;
+
+    let cityCardNotInDrawPile = true;
+    if (!cardCounter.isEpidemic) {
+      cityCardNotInDrawPile = cardCounter.allRounds.length !== 0 && !cardCounter.allRounds[cardCounter.allRounds.length - 1].includes(city);
+    } else {
+      // if all the city cards are in the last round, can't come up during epidemic
+      let highestCardCount = 0;
+      ([cardCounter.currentRound].concat(cardCounter.allRounds)).forEach(round => {
+        round.forEach(cityName => {
+          if (cityName === city) {
+            highestCardCount ++;
+          }
+        });
+      });
+      cityCardNotInDrawPile = highestCardCount >= storedCity.inDeck;
+    }
+    
     if (cityCardNotInDrawPile || usedAllCards) {
       cityButtons[city].style.display = "none";
     } else {
@@ -143,9 +175,22 @@ function render() {
 }
 render();
 
+document.getElementById("sortname").addEventListener("click", () => {
+  renderOddsList(false);
+});
+
+document.getElementById("sortodds").addEventListener("click", () => {
+  renderOddsList();
+});
+
 document.getElementById("epidemic").addEventListener("click", () => {
   cardCounter.isEpidemic = true;
   document.getElementById("epidemic").textContent = "Pick the bottom card";
+  render();
+});
+
+document.getElementById("resilpop").addEventListener("click", () => {
+  cardCounter.startEndResilPop();
   render();
 });
 

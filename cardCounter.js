@@ -16,6 +16,8 @@ export default class CardCounter {
         this.isEpidemic = false;
         this.isReset = false;
         this.allRounds = [];
+        this.resilPopCount = 0;
+        this.resilPopCity = "";
         this.getStorage();
         
         let cities = Object.keys(CITY_CARDS_IN_INFECTION_DECK).sort();
@@ -84,15 +86,56 @@ export default class CardCounter {
         
         this.validateState(cityName, storedCity);
         
-        this.currentRound.push(cityName);
-        this.updateOlderRounds(cityName);
-        
+        if (!this.resilPopCount) {
+          this.currentRound.push(cityName);
+          this.currentRound.sort();
+        }
+
         if (this.isEpidemic) {
             this.clearRound();
         } else {
-            storedCity.currentRound += 1;
+            if (!!this.resilPopCount) {
+              if (!this.resilPopCity) {
+                this.resilPopCity = cityName;
+              } else {
+                if (cityName !== this.resilPopCity) {
+                  alert("You have to select two of the same city for resilient population");
+                  return;
+                }
+              }
+  
+              if (storedCity.inDeck - 1 < 0) {
+                alert("You don't have another card to remove");
+                return;
+              }
+              storedCity.inDeck -= 1;
+              this.resilPopCount++;
+              this.resilientPopulation();
+            } else {
+              storedCity.currentRound += 1;
+            }
+            this.updateOlderRounds(cityName);
         }
         
         this.setStorage();
+    }
+
+    startEndResilPop() {
+      if (!this.resilPopCount) {
+        this.resilPopCount ++;
+        document.getElementById("resilpop").textContent = "Select city to remove (1/2)";
+      } else {
+        this.resilPopCount = 0;
+        this.resilPopCity = "";
+        document.getElementById("resilpop").textContent = "Start resilient population";
+      }
+    }
+
+    resilientPopulation() {
+      if (this.resilPopCount === 2) {
+        document.getElementById("resilpop").textContent = "Select city to remove (2/2)";
+      } else {
+        this.startEndResilPop();
+      }
     }
 }
