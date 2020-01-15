@@ -1,6 +1,7 @@
 import CardCounter from "./cardCounter.js";
 
 let cardCounter = new CardCounter();
+let cityButtons = {};
 
 // order cities by color, insert buttons, add click events
 function setup() {
@@ -35,6 +36,7 @@ function setup() {
 
     for (let city in cardCounter.drawnInfectionCards) {
       let cityButton = document.createElement("button");
+      cityButtons[city] = cityButton;
       cityButton.id = city;
       cityButton.textContent = city;
       cityButton.onclick = (e) => {
@@ -120,19 +122,31 @@ function render() {
       oddsList.push({cityName, color: cityObj.color, odds, drawn});
     });
   }
-
   oddsList.sort((a, b) => a.odds === b.odds ? (a.cityName > b.cityName ? 1 : -1) : (a.odds > b.odds ? -1 : 1));
   let oddsHtml = "";
   oddsList.forEach(city => {
     oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%${city.drawn}</div>`;
   })
   document.getElementById("infected-cities-odds-list").innerHTML = oddsHtml;
+
+  // Hide cards if they are not possible to come up
+  for(let city in cityButtons) {
+    let storedCity = cardCounter.drawnInfectionCards[city];
+    let cityCardNotInDrawPile = !cardCounter.isEpidemic && cardCounter.allRounds.length !== 0 && !cardCounter.allRounds[cardCounter.allRounds.length - 1].includes(city);
+    let usedAllCards = storedCity.currentRound + 1 > storedCity.inDeck;
+    if (cityCardNotInDrawPile || usedAllCards) {
+      cityButtons[city].style.display = "none";
+    } else {
+      cityButtons[city].style.display = "block";
+    }
+  }
 }
 render();
 
 document.getElementById("epidemic").addEventListener("click", () => {
   cardCounter.isEpidemic = true;
   document.getElementById("epidemic").textContent = "Pick the bottom card";
+  render();
 });
 
 // If you manually edited local storage, update UI with this
