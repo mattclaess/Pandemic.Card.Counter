@@ -3,6 +3,7 @@ import { CITY_CARDS_IN_INFECTION_DECK } from "./cities.js";
 const infection_deck_key = "drawn_infection_cards_dict";
 const current_round_key = "current_round_drawn_cards";
 const all_rounds_key = "all_rounds_drawn_cards";
+const resil_pop_city_key = "resil_pop_city_key";
 
 const prompt_text_id = "prompt-text";
 const epidemic_button_id = "epidemic";
@@ -38,6 +39,11 @@ export default class CardCounter {
         });
     }
 
+    setResilPopCity(city) {
+        this.resilPopCity = city;
+        localStorage.setItem(resil_pop_city_key, city);
+    }
+
     setStorage() {
         localStorage.setItem(infection_deck_key, JSON.stringify(this.drawnInfectionCards));
         localStorage.setItem(current_round_key, JSON.stringify(this.currentRound));
@@ -45,6 +51,7 @@ export default class CardCounter {
     }
 
     getStorage() {
+        this.resilPopCity = localStorage.getItem(resil_pop_city_key) || "";
         this.drawnInfectionCards = JSON.parse(localStorage.getItem(infection_deck_key)) || {};
         this.currentRound = JSON.parse(localStorage.getItem(current_round_key)) || [];
         this.allRounds = JSON.parse(localStorage.getItem(all_rounds_key)) || [];
@@ -110,7 +117,7 @@ export default class CardCounter {
         } else {
             if (!!this.resilPopCount) {
               if (!this.resilPopCity) {
-                this.resilPopCity = cityName;
+                this.setResilPopCity(cityName);
               } else {
                 if (cityName !== this.resilPopCity) {
                   alert("You have to select two of the same city for resilient population");
@@ -172,7 +179,6 @@ export default class CardCounter {
 
     resetResilPop(shouldScroll = true) {
       this.resilPopCount = 0;
-      this.resilPopCity = "";
       this.updateSelectorTextAndScroll(prompt_text_id, default_prompt_text, shouldScroll);
       this.updateSelectorTextAndScroll(resilpop_button_id, "Start resilient population", false);
     }

@@ -84,11 +84,13 @@ button#epidemic:disabled {
   display: flex;
   flex-direction: column;
 }
-.resilpop-container #resilpop {
+.resilpop-container #resilpop,
+.resilpop-container #resetResilPop {
   margin: 1rem 2rem;
   background-image: linear-gradient(to bottom right, #ce8b08, #630d00);
 }
-.resilpop-container #resilpop:active {
+.resilpop-container #resilpop:active,
+.resilpop-container #resetResilPop:active {
   background-image: linear-gradient(to bottom right, #996704, #3b0a02);
 }
 #reset {

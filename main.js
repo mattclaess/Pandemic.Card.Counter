@@ -195,10 +195,17 @@ function renderOddsList(sortOdds = true) {
     }
   }
 
-  if (!!cardCounter.getPreviousRound() && cardCounter.currentRound.length === 0) {
-    document.getElementById(resilpop_button_id).disabled = false;
+  if (!!cardCounter.getPreviousRound() && cardCounter.currentRound.length === 0
+      && (cardCounter.resilPopCount > 0 || (cardCounter.resilPopCount === 0 && cardCounter.resilPopCity === ""))) {
+    document.getElementById(resilpop_button_id).style.display = "block";
   } else {
-    document.getElementById(resilpop_button_id).disabled = true;
+    document.getElementById(resilpop_button_id).style.display = "none";
+  }
+
+  if (cardCounter.resilPopCity !== "" && cardCounter.resilPopCount === 0 && cardCounter.currentRound.length === 0) {
+    document.getElementById("resetResilPop").style.display = "block";
+  } else {
+    document.getElementById("resetResilPop").style.display = "none";
   }
 
   if (cardCounter.currentRound.length > 0) {
@@ -251,4 +258,9 @@ document.getElementById("reset").addEventListener("click", () => {
 
   localStorage.clear();
   window.location.reload();
+});
+
+document.getElementById("resetResilPop").addEventListener("click", () => {
+  cardCounter.setResilPopCity("");
+  render();
 });
