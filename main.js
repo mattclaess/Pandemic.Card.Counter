@@ -3,6 +3,11 @@ import CardCounter from "./cardCounter.js";
 let cardCounter = new CardCounter();
 let cityButtons = {};
 
+const prompt_text_id = "prompt-text";
+const epidemic_button_id = "epidemic";
+const resilpop_button_id = "resilpop";
+const default_prompt_text = "Infect a city!";
+
 // order cities by color, insert buttons, add click events
 function setup() {
     let buttonContainer = document.createElement("div");
@@ -57,6 +62,12 @@ function setup() {
     document.getElementById("infect").appendChild(buttonContainer);
 }
 setup();
+
+function updateSelectorTextAndScroll(selector, text, scroll = true) {
+  let promptTextElement = document.getElementById(selector);
+  promptTextElement.textContent = text;
+  scroll && promptTextElement.scrollIntoView();
+}
 
 function render() {
   if (cardCounter.isReset) {
@@ -141,19 +152,20 @@ function renderOddsList(sortOdds = true) {
 
   let oddsHtml = "";
   oddsList.forEach(city => {
-    oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%${city.drawn}</div>`;
-  })
+    if (city.odds > 0) {
+      oddsHtml += `<div class="infected-city ${city.color}">${city.cityName}: ${city.odds.toFixed(2)}%${city.drawn}</div>`;
+    }
+  });
   document.getElementById("infected-cities-odds-list").innerHTML = oddsHtml;
 
   // Hide cards if they are not possible to come up
   for(let city in cityButtons) {
     let storedCity = cardCounter.drawnInfectionCards[city];
     let usedAllCards = storedCity.currentRound + 1 > storedCity.inDeck;
+    let isResilPop = cardCounter.resilPopCount > 0;
 
     let cityCardNotInDrawPile = true;
-    if (!cardCounter.isEpidemic) {
-      cityCardNotInDrawPile = cardCounter.allRounds.length !== 0 && !cardCounter.allRounds[cardCounter.allRounds.length - 1].includes(city);
-    } else {
+    if (cardCounter.isEpidemic) {
       // if all the city cards are in the last round, can't come up during epidemic
       let highestCardCount = 0;
       ([cardCounter.currentRound].concat(cardCounter.allRounds)).forEach(round => {
@@ -164,13 +176,35 @@ function renderOddsList(sortOdds = true) {
         });
       });
       cityCardNotInDrawPile = highestCardCount >= storedCity.inDeck;
+    } else if (cardCounter.resilPopCount > 0) {
+      let previousRound = cardCounter.getPreviousRound();
+      for (let i = 0; i < previousRound.length; i++) {
+        if (previousRound[i] === city) {
+          cityCardNotInDrawPile = false;
+          break;
+        }
+      }
+    } else {
+      cityCardNotInDrawPile = cardCounter.allRounds.length !== 0 && !cardCounter.allRounds[cardCounter.allRounds.length - 1].includes(city);
     }
-    
-    if (cityCardNotInDrawPile || usedAllCards) {
+
+    if (cityCardNotInDrawPile || (!isResilPop && usedAllCards)) {
       cityButtons[city].style.display = "none";
     } else {
       cityButtons[city].style.display = "block";
     }
+  }
+
+  if (!!cardCounter.getPreviousRound() && cardCounter.currentRound.length === 0) {
+    document.getElementById(resilpop_button_id).disabled = false;
+  } else {
+    document.getElementById(resilpop_button_id).disabled = true;
+  }
+
+  if (cardCounter.currentRound.length > 0) {
+    document.getElementById(epidemic_button_id).disabled = false;
+  } else {
+    document.getElementById(epidemic_button_id).disabled = true;
   }
 }
 render();
@@ -184,13 +218,27 @@ document.getElementById("sortodds").addEventListener("click", () => {
 });
 
 document.getElementById("epidemic").addEventListener("click", () => {
-  cardCounter.isEpidemic = true;
-  document.getElementById("epidemic").textContent = "Pick the bottom card";
+  cardCounter.resetResilPop(false);
+
+  if (cardCounter.isEpidemic) {
+    cardCounter.isEpidemic = false;
+    updateSelectorTextAndScroll(prompt_text_id, default_prompt_text);
+    updateSelectorTextAndScroll(epidemic_button_id, "Epidemic", false);
+  } else {
+    cardCounter.isEpidemic = true;
+    updateSelectorTextAndScroll(prompt_text_id, "Select the bottom card");
+    updateSelectorTextAndScroll(epidemic_button_id, "Cancel Epidemic", false);
+  }
   render();
 });
 
 document.getElementById("resilpop").addEventListener("click", () => {
-  cardCounter.startEndResilPop();
+  cardCounter.resetEpidemic(false);
+
+  if (cardCounter.resilPopCount != 0) {
+    cardCounter.resilPopCount = 3;
+  }
+  cardCounter.resilientPopulation();
   render();
 });
 

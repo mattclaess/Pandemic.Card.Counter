@@ -4,6 +4,11 @@ const infection_deck_key = "drawn_infection_cards_dict";
 const current_round_key = "current_round_drawn_cards";
 const all_rounds_key = "all_rounds_drawn_cards";
 
+const prompt_text_id = "prompt-text";
+const epidemic_button_id = "epidemic";
+const resilpop_button_id = "resilpop";
+const default_prompt_text = "Infect a city!";
+
 export default class CardCounter {
     constructor() {
         // this of cards in current discard pile
@@ -45,6 +50,10 @@ export default class CardCounter {
         this.allRounds = JSON.parse(localStorage.getItem(all_rounds_key)) || [];
     }
 
+    getPreviousRound() {
+      return this.allRounds.length > 0 ? this.allRounds[this.allRounds.length - 1] : null;
+    }
+
     validateState(cityName, storedCity) {
         if (!storedCity) {
           throw new Error("City does not exist!");
@@ -53,13 +62,13 @@ export default class CardCounter {
         {
           throw new Error("City is not in draw pile!");
         }
-        if (storedCity.currentRound + 1 > storedCity.inDeck) {
+        if (storedCity.currentRound + 1 > storedCity.inDeck && !this.resilPopCount) {
           throw new Error("There should not be any more cards for that city in the draw pile!");
         }
     }
 
     updateOlderRounds(cityName) {
-      let previousRound = !!this.allRounds.length && this.allRounds[this.allRounds.length - 1];
+      let previousRound = this.getPreviousRound();
 
       if (!!previousRound) {
         if (previousRound.length > 0) {
@@ -76,7 +85,7 @@ export default class CardCounter {
     }
 
     clearRound() {
-      this.isEpidemic = false;
+      this.resetEpidemic();
       this.allRounds.push(this.currentRound);
       this.currentRound = [];
     
@@ -114,33 +123,57 @@ export default class CardCounter {
                 return;
               }
               storedCity.inDeck -= 1;
-              this.resilPopCount++;
+
+              let previousRound = this.getPreviousRound();
+              let index = previousRound.indexOf(cityName);
+              previousRound.splice(index, 1);
+
+              let newIndex = previousRound.indexOf(cityName);
+              if (newIndex > -1) {
+                this.resilPopCount++;
+              } else {
+                this.resilPopCount = 3;
+              }
+
               this.resilientPopulation();
             } else {
               storedCity.currentRound += 1;
+              this.updateOlderRounds(cityName);
+              document.getElementById("theList").scrollIntoView();
             }
-            this.updateOlderRounds(cityName);
         }
         
         this.setStorage();
     }
 
-    startEndResilPop() {
-      if (!this.resilPopCount) {
-        this.resilPopCount ++;
-        document.getElementById("resilpop").textContent = "Select city to remove (1/2)";
-      } else {
-        this.resilPopCount = 0;
-        this.resilPopCity = "";
-        document.getElementById("resilpop").textContent = "Start resilient population";
-      }
+    updateSelectorTextAndScroll(selector, text, scroll = true) {
+      let promptTextElement = document.getElementById(selector);
+      promptTextElement.textContent = text;
+      scroll && promptTextElement.scrollIntoView();
     }
 
     resilientPopulation() {
-      if (this.resilPopCount === 2) {
-        document.getElementById("resilpop").textContent = "Select city to remove (2/2)";
+      if (!this.resilPopCount) {
+        this.resilPopCount ++;
+        this.updateSelectorTextAndScroll(prompt_text_id, "Select from available cities to remove (1/2)");
+        this.updateSelectorTextAndScroll(resilpop_button_id, "End resilient population", false);
+      } else if (this.resilPopCount > 2) {
+        this.resetResilPop();
       } else {
-        this.startEndResilPop();
+        this.updateSelectorTextAndScroll(prompt_text_id, "Select from available cities to remove (2/2)")
       }
+    }
+
+    resetEpidemic(shouldScroll = true) {
+      this.isEpidemic = false;
+      this.updateSelectorTextAndScroll(prompt_text_id, default_prompt_text, shouldScroll);
+      this.updateSelectorTextAndScroll(epidemic_button_id, "Epidemic", false);
+    }
+
+    resetResilPop(shouldScroll = true) {
+      this.resilPopCount = 0;
+      this.resilPopCity = "";
+      this.updateSelectorTextAndScroll(prompt_text_id, default_prompt_text, shouldScroll);
+      this.updateSelectorTextAndScroll(resilpop_button_id, "Start resilient population", false);
     }
 }

@@ -30,6 +30,7 @@ body {
 }
 
 button {
+    cursor: pointer;
     font-size: 1.25em;
     padding: 0.5rem 1rem;
     margin: 0.25rem;
@@ -40,6 +41,11 @@ button {
 
     &:focus {
         outline: none;
+    }
+
+    &#resilpop:disabled, &#epidemic:disabled {
+        background: #999;
+        color: #666;
     }
 }
 
@@ -52,14 +58,26 @@ button {
 
     &#blue-city-container > button {
         background: #56aeca;
+
+        &:active {
+            background: #2e7085;
+        }
     }
 
     &#yellow-city-container > button {
         background: #f4a423;
+
+        &:active {
+            background: #b1730f;
+        }
     }
 
     &#black-city-container > button {
         background: #000;
+
+        &:active {
+            background: #222;
+        }
     }
 }
 
@@ -72,6 +90,10 @@ button {
         font-family: 'Creepster', cursive;
         font-size: 36px;
         background-image: linear-gradient(to bottom right, #37864d, #223f26);
+        
+        &:active {
+            background-image: linear-gradient(to bottom right, #1b582d, #09160b);
+        }
     }
 }
 
@@ -82,6 +104,10 @@ button {
     #resilpop {
         margin: 1rem 2rem;
         background-image: linear-gradient(to bottom right, #ce8b08, #630d00);
+
+        &:active {
+            background-image: linear-gradient(to bottom right, #996704, #3b0a02);
+        }
     }
 }
 
@@ -140,6 +166,10 @@ button {
 
     button {
         background: #585858;
+
+        &:active {
+            background: #888;
+        }
     
         &.active {
             background: #56aeca;

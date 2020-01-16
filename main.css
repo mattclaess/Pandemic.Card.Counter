@@ -25,6 +25,7 @@ body {
   justify-content: center;
 }
 button {
+  cursor: pointer;
   font-size: 1.25em;
   padding: 0.5rem 1rem;
   margin: 0.25rem;
@@ -36,6 +37,11 @@ button {
 button:focus {
   outline: none;
 }
+button#resilpop:disabled,
+button#epidemic:disabled {
+  background: #999;
+  color: #666;
+}
 .city-color-container {
   display: flex;
   flex-direction: row;
@@ -46,11 +52,20 @@ button:focus {
 .city-color-container#blue-city-container > button {
   background: #56aeca;
 }
+.city-color-container#blue-city-container > button:active {
+  background: #2e7085;
+}
 .city-color-container#yellow-city-container > button {
   background: #f4a423;
 }
+.city-color-container#yellow-city-container > button:active {
+  background: #b1730f;
+}
 .city-color-container#black-city-container > button {
   background: #000;
+}
+.city-color-container#black-city-container > button:active {
+  background: #222;
 }
 .epidemic-container {
   display: flex;
@@ -62,6 +77,9 @@ button:focus {
   font-size: 36px;
   background-image: linear-gradient(to bottom right, #37864d, #223f26);
 }
+.epidemic-container #epidemic:active {
+  background-image: linear-gradient(to bottom right, #1b582d, #09160b);
+}
 .resilpop-container {
   display: flex;
   flex-direction: column;
@@ -69,6 +87,9 @@ button:focus {
 .resilpop-container #resilpop {
   margin: 1rem 2rem;
   background-image: linear-gradient(to bottom right, #ce8b08, #630d00);
+}
+.resilpop-container #resilpop:active {
+  background-image: linear-gradient(to bottom right, #996704, #3b0a02);
 }
 #reset {
   background: red;
@@ -117,6 +138,9 @@ button:focus {
 }
 .sort-container button {
   background: #585858;
+}
+.sort-container button:active {
+  background: #888;
 }
 .sort-container button.active {
   background: #56aeca;
