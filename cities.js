@@ -11,7 +11,7 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
     },
     "atlanta": {
         color: "blue",
-        total: 2
+        total: 1
     },
     "new york": {
         color: "blue",
@@ -27,7 +27,7 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
     },
     "chicago": {
         color: "blue",
-        total: 3
+        total: 2
     },
     "jacksonville": {
         color: "yellow",
@@ -35,7 +35,7 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
     },
     "lima": {
         color: "yellow",
-        total: 3
+        total: 1
     },
     "sao paulo": {
         color: "yellow",
@@ -43,7 +43,7 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
     },
     "buenos aires": {
         color: "yellow",
-        total: 3
+        total: 2
     },
     "lagos": {
         color: "yellow",
