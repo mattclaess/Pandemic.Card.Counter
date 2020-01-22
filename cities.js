@@ -29,6 +29,14 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
         color: "blue",
         total: 2
     },
+    "paris": {
+        color: "blue",
+        total: 2
+    },
+    "frankfurt": {
+        color: "blue",
+        total: 2
+    },
     "jacksonville": {
         color: "yellow",
         total: 3
