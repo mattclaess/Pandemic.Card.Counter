@@ -63,7 +63,7 @@ export const CITY_CARDS_IN_INFECTION_DECK = {
     },
     "los angeles": {
         color: "yellow",
-        total: 2
+        total: 1
     },
     "tripoli": {
         color: "black",
